@@ -1,21 +1,21 @@
-import streamlit as st
+import time
 from datetime import datetime
 import pytz
+import streamlit as st
 
-def get_current_time_in_zone(zone):
-    timezone = pytz.timezone(zone)
-    return datetime.now(timezone)
+placeholder = st.empty()
 
-st.title('World Clock')
+timezones = {
+    "Tokyo": "Asia/Tokyo",
+    "London": "Europe/London",
+    "New York": "America/New_York",
+    "Sydney": "Australia/Sydney",
+}
 
-locations = ['Asia/Tokyo', 'Europe/London', 'America/New_York', 'Australia/Sydney']
-selected_locations = st.multiselect('Select up to four locations:', locations, default=locations[0])
-
-time_container = st.empty()
-
-st_autorefresh_interval = st.experimental_get_query_params().get("autorefresh", [1000])[0]  # 设置自动刷新间隔为1000毫秒（1秒）
-st.experimental_set_query_params(autorefresh=st_autorefresh_interval)  # 为URL设置自动刷新查询参数
-
-for location in selected_locations:
-    current_time = get_current_time_in_zone(location)
-    time_container.write(f"{location} Current Time: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
+while True:
+    with placeholder.container():
+        st.title("World Clock")
+        for city, tz in timezones.items():
+            now = datetime.now(pytz.timezone(tz))
+            st.write(f"{city}: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+    time.sleep(1)
